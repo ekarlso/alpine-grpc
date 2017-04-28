@@ -15,7 +15,6 @@ license=Apache
 #source=$pkgname-$pkgver.tar.gz::https://github.com/grpc/grpc/archive/master.tar.gz
 #source=""
 
-#_builddir="$srcdir"/$pkgname-$pkgver
 _builddir="$srcdir"/$pkgname
 
 prepare() {
@@ -49,7 +48,7 @@ build() {
 
 package() {
 	cd "$_builddir"
-	make prefix="$pkgdir" install
+	make prefix="$pkgdir/usr" install
     #make list
 }
 
