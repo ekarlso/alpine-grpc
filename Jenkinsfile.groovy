@@ -58,7 +58,7 @@ node {
       def img = imgName(abuilderName, arch, env.BUILD_TAG)
 
       sh "mkdir -p ${archBuildDir}"
-      sh "cp ${workspace}/APKBUILD ${archBuildDir}"
+      sh "cp ${workspace}/APKBUILD ${workspace}/*.patch ${archBuildDir}"
 
       def rsaKey = readFile "${env.HOME}/.abuild/${apk_key}"
 
