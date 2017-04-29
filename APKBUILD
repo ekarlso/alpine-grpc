@@ -1,56 +1,31 @@
+# Contributor: Shiz <hi@shiz.me>
+# Maintainer: Shiz <hi@shiz.me>
 pkgname=grpc
-pkgver="1.3.0"
-giturl=https://github.com/grpc/grpc
-pkgdesc="gRPC"
-pkgrel=1
+pkgver=1.3.0
+pkgrel=0
+pkgdesc="high performance, open-source universal RPC framework"
+url="http://www.grpc.io"
 arch="all"
-depends=openssl
-depends_dev="openssl-dev c-ares-dev protobuf-dev zlib-dev gcc g++ make libtool"
-makedepends="$depends_dev"
-install=
+license="BSD-3"
+depends_dev="protobuf-dev"
+makedepends="$depends_dev libressl-dev c-ares-dev"
 subpackages="$pkgname-dev"
-url=https://github.com/grpc/grpc/
-license=Apache
-#source=$pkgname-$pkgver.tar.gz::https://github.com/grpc/grpc/archive/v1.2.5.tar.gz
-#source=$pkgname-$pkgver.tar.gz::https://github.com/grpc/grpc/archive/master.tar.gz
-#source=""
-
-_builddir="$srcdir"/$pkgname
-
-prepare() {
-    cd "$srcdir"
-    wget https://build.svcs.io/artifacts/grpc.tar.gz
-    mkdir grpc
-    tar -xf grpc.tar.gz -C grpc
-
-    #git clone https://github.com/grpc/grpc
-    #git fetch origin pull/10800/head:fixed
-    #git checkout -b fix FETCH_HEAD
-
-	return 0
-}
-
-snapshot() {
-    abuild clean
-    abuild deps
-
-    mkdir -p "$srcdir"
-    cd $srcdir
-
-}
+source="grpc-$pkgver.tar.gz::https://github.com/grpc/grpc/archive/v$pkgver.tar.gz
+	fix-soname-mismatch.patch"
+builddir="$srcdir/grpc-$pkgver"
+options="!check" # broken testing infrastructure
 
 build() {
-	# parallel build issue:
-	# https://github.com/protobuf-c/protobuf-c/issues/156
-  cd "$_builddir"
-  make -j4
+	cd "$builddir"
+	make CONFIG=opt prefix=/usr
 }
 
 package() {
-	cd "$_builddir"
-	make prefix="$pkgdir/usr" install
-    #make list
+	cd "$builddir"
+	# set prefix to $pkgdir/usr here because the build system doesn't
+	# have a DESTDIR equivalent.
+	make CONFIG=opt prefix="$pkgdir/usr" install
 }
 
-##sha256sums="e07ac5a2c657c25d5628529ec051f2ae3fa69a1d8802125810cba0c35fed9adf grpc-1.2.3.tar.gz"
-##sha256sums="59ade1c93f2507d2804f47ca9497b3390f0b0f49e331504740df433fb636a33d grpc-1.2.5.tar.gz"
+sha512sums="abf2ec49a63af24cdff6f4703805724288244f49f695d43a1f61fbe30922dfbca745f9b5026351735ffeee7d64156c687ec8f14ee3e9901185106a4c2227a41c  grpc-1.3.0.tar.gz
+af8e7ea2c2935dc10ad3efdede359ec18fb6d7b8a6bdaf6add0796434e8f9882f02e2b51c040544169bded81590b24115123652a33d1a5a40f8e53169f6b4df9  fix-soname-mismatch.patch"
